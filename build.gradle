@@ -38,7 +38,6 @@ compileTestJava.options.encoding = 'UTF-8'
 javadoc.options.encoding = 'UTF-8'
 
 jar {
-    dependsOn 'check'
     manifest.attributes(
         'Main-Class': 'uk.org.okapibarcode.OkapiBarcode',
         'Implementation-Title': 'Okapi Barcode',
@@ -50,71 +49,14 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.14.1'
 }
 
-/*------------------------------------------------------------------------------------------------*/
-/*                         CONFIGURATION FOR UPLOAD TO MAVEN CENTRAL REPO                         */
-/*                                                                                                */
-/* The signing credentials and Sonatype OSSRH credentials must be in the gradle.properties file.  */
-/* Upload to Maven Central with the command "gradlew uploadArchives".                             */
-/* http://central.sonatype.org/pages/gradle.html                                                  */
-/* http://central.sonatype.org/pages/ossrh-guide.html                                             */
-/*                                                                                                */
-/*------------------------------------------------------------------------------------------------*/
-
-apply plugin: 'maven'
-apply plugin: 'signing'
-
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
-    from 'build/docs/javadoc'
+    from javadoc
 }
 
 task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
     classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
-artifacts {
-    archives javadocJar, sourcesJar
-}
-
-signing {
-    sign configurations.archives
-}
-
-uploadArchives {
-    repositories.mavenDeployer {
-        beforeDeployment {
-            MavenDeployment deployment -> signing.signPom(deployment)
-        }
-        repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-            authentication(userName: sonatypeUsername, password: sonatypePassword)
-        }
-        pom.project {
-            name 'Okapi Barcode'
-            description 'Okapi Barcode is an open-source barcode generator written entirely in Java, ' +
-                        'supporting over 50 encoding standards including all ISO standards.'
-            packaging 'jar'
-            url 'https://github.com/woo-j/OkapiBarcode'
-            scm {
-                connection 'scm:git:git://github.com/woo-j/OkapiBarcode.git'
-                url 'https://github.com/woo-j/OkapiBarcode'
-            }
-            licenses {
-                license {
-                    name 'The Apache License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                }
-            }
-            developers {
-                developer {
-                    id 'woo-j'
-                    name 'Robin Stuart'
-                }
-                developer {
-                    id 'gredler'
-                    name 'Daniel Gredler'
-                }
-            }
-        }
-    }
-}
+// herrlock: removed publishing to maven-repo
