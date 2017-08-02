@@ -548,8 +548,7 @@ public class SymbolTest {
             throw new IOException("Invalid UTF-8 content in file " + propertiesFile.getAbsolutePath(), e);
         }
 
-        String eol = System.lineSeparator();
-        String[] lines = content.split(eol);
+        String[] lines = content.split("\r?\n");
 
         List< Map< String, String > > allProperties = new ArrayList<>();
         Map< String, String > properties = new LinkedHashMap<>();
